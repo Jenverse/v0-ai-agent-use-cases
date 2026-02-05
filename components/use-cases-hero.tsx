@@ -18,21 +18,21 @@ export function UseCasesHero() {
         </h1>
         
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 text-balance">
-          Reduce LLM costs by up to 68% and accelerate response times by caching semantically similar queries
+          Cache responses for semantically similar questions — users ask the same thing in countless ways
         </p>
 
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent" />
-            <span>Lower Latency</span>
+            <span>Instant Responses</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent" />
-            <span>Cost Reduction</span>
+            <span>Lower API Costs</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent" />
-            <span>Scalability</span>
+            <span>Scale Effortlessly</span>
           </div>
         </div>
       </div>
