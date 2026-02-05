@@ -32,7 +32,15 @@ export default function HighStakesPage() {
         { role: "user", userName: "User 2", content: "My chest feels tight and I can't breathe well" },
         { role: "assistant", content: "DANGEROUS if cached!\n\nWhile the symptoms sound similar, User 2 could have:\n• Anxiety/panic attack\n• Asthma flare-up\n• Cardiac event\n• Pulmonary issue\n\nEach requires different guidance. A cached \"call 911\" response might be wrong for an anxiety attack; missing a heart attack by suggesting breathing exercises could be fatal.", cached: false },
       ]}
-      bottomLine="When lives, liberty, or livelihoods are at stake, every query deserves fresh, careful evaluation. The cost of a wrong cached answer in these domains is simply too high."
+      bottomLine="When lives, liberty, or livelihoods are at stake, every query deserves fresh, careful evaluation. The cost of a wrong cached answer is too high."
+      customerExamples={[
+        "Telehealth Symptom Checkers",
+        "Legal Document Review",
+        "Financial Advisors AI",
+        "Insurance Claim Bots",
+        "Drug Interaction Checkers",
+        "Tax Advice Chatbots"
+      ]}
     />
   )
 }

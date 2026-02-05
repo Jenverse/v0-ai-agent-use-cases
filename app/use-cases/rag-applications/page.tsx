@@ -34,7 +34,15 @@ export default function RAGApplicationsPage() {
         { role: "user", userName: "User 3", content: "How do returns work here?" },
         { role: "assistant", content: "Per our company policy document:\n\n• Full refunds available within 30 days of purchase\n• Items must be unused and in original packaging\n• Refunds processed within 5-7 business days\n• Original shipping costs are non-refundable\n\nFor exceptions, contact customer service.", cached: true },
       ]}
-      bottomLine="RAG applications benefit doubly from semantic caching — you skip both the vector search and the LLM generation. For knowledge bases with common queries, this dramatically reduces cost and latency."
+      bottomLine="RAG applications benefit doubly — skip both the vector search and LLM generation. For knowledge bases with common queries, this dramatically reduces cost and latency."
+      customerExamples={[
+        "Notion AI Search",
+        "Confluence Knowledge Base",
+        "SharePoint Copilot",
+        "Guru AI Assistant",
+        "Internal Wikis",
+        "HR Policy Bots"
+      ]}
     />
   )
 }

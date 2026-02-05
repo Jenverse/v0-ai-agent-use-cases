@@ -34,7 +34,15 @@ export default function FAQChatbotsPage() {
         { role: "user", userName: "User 3", content: "What time do you close?" },
         { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST.\n\nClosed on weekends and major holidays.\n\nOur support team typically responds within 2 hours during business hours. For urgent matters, you can reach us at support@company.com.", cached: true },
       ]}
-      bottomLine="FAQ chatbots are the textbook use case for semantic caching. High volume, repetitive questions, stable answers. If your prospect has an FAQ chatbot, semantic caching will immediately deliver value."
+      bottomLine="FAQ chatbots are the textbook use case for semantic caching. High volume, repetitive questions, stable answers. Immediate value for any prospect with a chatbot."
+      customerExamples={[
+        "Airline Help Bots",
+        "Bank Account Assistants",
+        "Insurance Claim Bots",
+        "Telecom Support Chat",
+        "Hotel Concierge Bots",
+        "University Info Portals"
+      ]}
     />
   )
 }

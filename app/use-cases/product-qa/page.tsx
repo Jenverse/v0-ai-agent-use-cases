@@ -34,7 +34,15 @@ export default function ProductQAPage() {
         { role: "user", userName: "User 3", content: "Is this good for keeping meals warm all day?" },
         { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation. It's perfect for keeping your meals at the ideal temperature throughout your day.", cached: true },
       ]}
-      bottomLine="3 different customers, 3 different phrasings, 1 LLM call. Every cache hit means instant response + zero API cost. At scale, this translates to massive savings during high-traffic periods."
+      bottomLine="3 different customers, 3 different phrasings, 1 LLM call. Every cache hit means instant response + zero API cost."
+      customerExamples={[
+        "Amazon Product Pages",
+        "Walmart.com Chatbot",
+        "Best Buy Product Q&A",
+        "Home Depot Assistant",
+        "Shopify Stores",
+        "Target.com Help"
+      ]}
     />
   )
 }

@@ -32,7 +32,15 @@ export default function RealTimeDataPage() {
         { role: "user", userName: "User 2 (2:00 PM)", content: "What's Apple stock at?" },
         { role: "assistant", content: "WRONG if cached!\n\nThe market has moved. AAPL is now at $191.25.\n\nReturning the cached $187.50 price from the morning would give User 2 a price that's $3.75 off — potentially impacting trading decisions.", cached: false },
       ]}
-      bottomLine="Real-time data queries are fundamentally incompatible with caching. The entire value proposition is freshness. If it's not current, it's not useful."
+      bottomLine="Real-time data queries are fundamentally incompatible with caching. The entire value proposition is freshness."
+      customerExamples={[
+        "Bloomberg Terminal AI",
+        "Trading Platforms",
+        "Live Sports Apps",
+        "Flight Status Trackers",
+        "Weather Apps",
+        "Inventory Systems"
+      ]}
     />
   )
 }

@@ -32,7 +32,15 @@ export default function CodeGenerationPage() {
         { role: "user", userName: "User 2", content: "Write a function to sort an array of objects by name" },
         { role: "assistant", content: "WRONG if cached!\n\nUser 2 needs a completely different implementation:\n\nfunction sortByName(arr) {\n  return arr.sort((a, b) => \n    a.name.localeCompare(b.name)\n  );\n}\n\nThe cached numeric sort would fail on objects.", cached: false },
       ]}
-      bottomLine="Code requests that sound semantically similar often require fundamentally different implementations. The semantic similarity that makes caching work in other domains becomes a liability for code generation."
+      bottomLine="Code requests that sound semantically similar often require fundamentally different implementations. Semantic similarity becomes a liability here."
+      customerExamples={[
+        "GitHub Copilot",
+        "Cursor AI",
+        "Replit Ghostwriter",
+        "Tabnine",
+        "Amazon CodeWhisperer",
+        "Sourcegraph Cody"
+      ]}
     />
   )
 }

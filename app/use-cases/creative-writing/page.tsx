@@ -32,7 +32,15 @@ export default function CreativeWritingPage() {
         { role: "user", userName: "User 2", content: "Give me a slogan for my cafe" },
         { role: "assistant", content: "USELESS if cached!\n\nUser 2 would receive the exact same tagline as User 1.\n\nNow two competing coffee shops have identical branding. This defeats the entire purpose of creative generation.", cached: false },
       ]}
-      bottomLine="Creative writing exists to produce unique, original content. Caching transforms 'creative generation' into 'copy-paste' — the opposite of what users want and need."
+      bottomLine="Creative writing exists to produce unique, original content. Caching transforms 'creative generation' into 'copy-paste'."
+      customerExamples={[
+        "Jasper AI",
+        "Copy.ai",
+        "Writesonic",
+        "Midjourney Prompts",
+        "Ad Copy Generators",
+        "Story Writing Apps"
+      ]}
     />
   )
 }

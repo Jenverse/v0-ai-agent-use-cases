@@ -21,6 +21,7 @@ interface UseCasePageLayoutProps {
   scenario: string
   conversation: ChatMessage[]
   bottomLine: string
+  customerExamples: string[]
   isGoodFit: boolean
 }
 
@@ -31,6 +32,7 @@ export function UseCasePageLayout({
   scenario,
   conversation,
   bottomLine,
+  customerExamples,
   isGoodFit,
 }: UseCasePageLayoutProps) {
   const accentColor = isGoodFit ? "emerald" : "red"
@@ -101,7 +103,29 @@ export function UseCasePageLayout({
             )}>
               Bottom Line
             </h3>
-            <p className="text-foreground">{bottomLine}</p>
+            <p className="text-foreground mb-4">{bottomLine}</p>
+            
+            {/* Customer Examples */}
+            <div className="pt-4 border-t border-border/50">
+              <h4 className="text-sm font-semibold text-muted-foreground mb-3">
+                {isGoodFit ? "Target Customers" : "Examples to Avoid"}
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {customerExamples.map((example, index) => (
+                  <span 
+                    key={index}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-sm font-medium",
+                      isGoodFit 
+                        ? "bg-emerald-500/20 text-emerald-400" 
+                        : "bg-red-500/20 text-red-400"
+                    )}
+                  >
+                    {example}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

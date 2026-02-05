@@ -34,7 +34,15 @@ export default function CustomerSupportPage() {
         { role: "user", userName: "User 3", content: "Can't get into my account, what do I do?" },
         { role: "assistant", content: "To reset your password:\n\n1. Go to Settings > Account > Security\n2. Click \"Reset Password\"\n3. Check your email for a reset link (arrives within 5 minutes)\n4. Click the link and create a new password\n\nNeed more help? Contact support@company.com", cached: true },
       ]}
-      bottomLine="Password reset is the #1 support request across industries. Different customers, different words, same solution. Semantic caching eliminates redundant LLM calls while maintaining quality support."
+      bottomLine="Password reset is the #1 support request across industries. Different customers, different words, same solution."
+      customerExamples={[
+        "Zendesk AI Agents",
+        "Intercom Chatbots",
+        "Freshdesk Support",
+        "Salesforce Service Cloud",
+        "HubSpot Help Desk",
+        "Drift Conversational AI"
+      ]}
     />
   )
 }
