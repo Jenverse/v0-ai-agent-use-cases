@@ -130,10 +130,10 @@ export function UseCasePageLayout({
         </div>
 
         {/* Right Column - Chat Demo */}
-        <div className="border border-border rounded-2xl overflow-hidden bg-card">
+        <div className="border border-border rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-800/80 via-zinc-900/90 to-zinc-950">
           {/* Chat Header */}
           <div className={cn(
-            "px-5 py-5 border-b border-border",
+            "px-5 py-5 border-b border-white/10",
             isGoodFit
               ? "bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent"
               : "bg-gradient-to-r from-red-500/15 via-red-500/5 to-transparent"
@@ -166,14 +166,14 @@ export function UseCasePageLayout({
                 <div className={cn(
                   "max-w-[90%] rounded-2xl px-4 py-3",
                   message.role === "user"
-                    ? "bg-secondary text-foreground rounded-br-sm"
-                    : "bg-muted/50 text-foreground rounded-bl-sm"
+                    ? "bg-white/10 text-foreground rounded-br-sm backdrop-blur-sm"
+                    : "bg-zinc-700/50 text-foreground rounded-bl-sm backdrop-blur-sm"
                 )}>
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   {message.role === "assistant" && message.cached !== undefined && (
                     <div className={cn(
-                      "mt-2 text-xs font-semibold flex items-center gap-2 pt-2 border-t border-border/50",
-                      message.cached ? "text-emerald-500" : "text-muted-foreground"
+                      "mt-2 text-xs font-semibold flex items-center gap-2 pt-2 border-t border-white/10",
+                      message.cached ? "text-emerald-400" : "text-zinc-400"
                     )}>
                       {message.cached ? (
                         <>
