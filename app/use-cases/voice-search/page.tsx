@@ -10,38 +10,38 @@ export default function VoiceSearchPage() {
       keyPoints={[
         {
           title: "Natural Speech Variations",
-          description: "Voice input is inherently messy. People use filler words ('um', 'like'), pause mid-sentence, and phrase things casually. Semantic caching handles all these variations."
+          description: "Voice input is messy. People say 'um', 'like', pause mid-sentence, and phrase things casually. Semantic caching treats all these variations as the same intent."
         },
         {
-          title: "Same Intent, Different Words",
-          description: "\"Find Italian restaurants\" vs \"I'm looking for, like, Italian food\" vs \"Where can I get pasta nearby\" — all the same intent expressed differently."
+          title: "Same Movie, Countless Ways to Ask",
+          description: "\"Play that new action movie\" vs \"Show me the latest action film\" vs \"I wanna watch an action flick\" — same request, completely different words."
         },
         {
           title: "Accent & Pronunciation Tolerance",
-          description: "Speech-to-text creates variations based on accents and pronunciation. Semantic matching handles \"gonna\" and \"going to\" as equivalent."
+          description: "Speech-to-text produces different text based on accents and speaking styles. Semantic matching handles 'gonna' and 'going to' as equivalent."
         },
         {
-          title: "Latency-Critical Applications",
-          description: "Voice interfaces demand instant responses. Users won't wait 2-3 seconds for an LLM. Cached responses deliver sub-100ms answers."
+          title: "Instant Response is Critical",
+          description: "Voice users expect an answer immediately — no one wants to stare at a TV waiting. Cached responses deliver near-instant results."
         },
       ]}
-      scenario="Voice assistant helping users find nearby restaurants"
+      scenario="A Vizio SmartCast TV where users search for movies using voice remote"
       conversation={[
-        { role: "user", userName: "User 1", content: "Find me Italian restaurants nearby" },
-        { role: "assistant", content: "Here are the top Italian restaurants near you:\n\n1. Bella Italia (0.3 mi) — 4.5 stars\n2. Tony's Trattoria (0.5 mi) — 4.3 stars\n3. Pasta House (0.8 mi) — 4.4 stars\n\nWould you like directions to any of these?", cached: false },
-        { role: "user", userName: "User 2", content: "Um, I'm looking for like, Italian food around here?" },
-        { role: "assistant", content: "Here are the top Italian restaurants near you:\n\n1. Bella Italia (0.3 mi) — 4.5 stars\n2. Tony's Trattoria (0.5 mi) — 4.3 stars\n3. Pasta House (0.8 mi) — 4.4 stars\n\nWould you like directions to any of these?", cached: true },
-        { role: "user", userName: "User 3", content: "Show me some Italian places to eat" },
-        { role: "assistant", content: "Here are the top Italian restaurants near you:\n\n1. Bella Italia (0.3 mi) — 4.5 stars\n2. Tony's Trattoria (0.5 mi) — 4.3 stars\n3. Pasta House (0.8 mi) — 4.4 stars\n\nWould you like directions to any of these?", cached: true },
+        { role: "user", userName: "User 1", content: "Show me some good action movies" },
+        { role: "assistant", content: "Here are popular action movies for you:\n\n1. John Wick: Chapter 4\n2. Mission: Impossible - Dead Reckoning\n3. Extraction 2\n4. The Equalizer 3\n\nSay a title to start watching.", cached: false },
+        { role: "user", userName: "User 2", content: "Um, I wanna watch like, an action film" },
+        { role: "assistant", content: "Here are popular action movies for you:\n\n1. John Wick: Chapter 4\n2. Mission: Impossible - Dead Reckoning\n3. Extraction 2\n4. The Equalizer 3\n\nSay a title to start watching.", cached: true },
+        { role: "user", userName: "User 3", content: "Find me action movies to watch tonight" },
+        { role: "assistant", content: "Here are popular action movies for you:\n\n1. John Wick: Chapter 4\n2. Mission: Impossible - Dead Reckoning\n3. Extraction 2\n4. The Equalizer 3\n\nSay a title to start watching.", cached: true },
       ]}
-      bottomLine="Voice queries have the highest variation rate of any input type. Filler words, casual phrasing, speech patterns differ wildly — but the intent stays the same."
+      bottomLine=""
       customerExamples={[
-        "Alexa Skills",
-        "Google Assistant Actions",
-        "Siri Integrations",
-        "Samsung Bixby",
-        "In-Car Voice Systems",
-        "Smart Home Devices"
+        "Vizio SmartCast TV",
+        "Roku Voice Remote",
+        "Fire TV Stick",
+        "Apple TV Siri",
+        "Samsung Smart TV",
+        "Google Chromecast"
       ]}
     />
   )
