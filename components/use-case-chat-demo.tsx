@@ -10,6 +10,7 @@ interface ChatMessage {
   role: "user" | "assistant"
   content: string
   cached?: boolean
+  userName?: string
 }
 
 interface UseCase {
@@ -37,15 +38,15 @@ const goodUseCases: UseCase[] = [
       image: "/thermos.jpg"
     },
     conversation: [
-      { role: "user", content: "How long does the thermos keep food warm?" },
+      { role: "user", userName: "User 1", content: "How long does the thermos keep food warm?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: false },
-      { role: "user", content: "Will my soup stay hot all day in this?" },
+      { role: "user", userName: "User 2", content: "Will my soup stay hot all day in this?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: true },
-      { role: "user", content: "Is it good for keeping meals warm?" },
+      { role: "user", userName: "User 3", content: "Is it good for keeping meals warm?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: true },
     ],
     isGoodFit: true,
-    cacheExplanation: "Same answer works for all 3 questions because they ask the same thing in different ways"
+    cacheExplanation: "3 different users asking the same thing in their own words — all served from one cached response"
   },
   {
     id: "customer-support",
@@ -53,15 +54,15 @@ const goodUseCases: UseCase[] = [
     title: "Customer Support",
     shortDesc: "Help desk & support bots",
     conversation: [
-      { role: "user", content: "How do I reset my password?" },
+      { role: "user", userName: "User 1", content: "How do I reset my password?" },
       { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: false },
-      { role: "user", content: "I forgot my login credentials" },
+      { role: "user", userName: "User 2", content: "I forgot my login credentials" },
       { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: true },
-      { role: "user", content: "Can't get into my account, what do I do?" },
+      { role: "user", userName: "User 3", content: "Can't get into my account, what do I do?" },
       { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: true },
     ],
     isGoodFit: true,
-    cacheExplanation: "Support questions are often asked many different ways but have the same solution"
+    cacheExplanation: "Password reset is the #1 support question — each user phrases it differently, same answer works"
   },
   {
     id: "voice-search",
@@ -69,15 +70,15 @@ const goodUseCases: UseCase[] = [
     title: "Voice Search",
     shortDesc: "Voice assistants & search",
     conversation: [
-      { role: "user", content: "What's the weather gonna be like today?" },
-      { role: "assistant", content: "I can help you check the weather! Please note: For live weather data, I'd connect to a weather API. Semantic caching helps when users ask about weather features or historical patterns.", cached: false },
-      { role: "user", content: "Um, how's the weather looking?" },
-      { role: "assistant", content: "I can help you check the weather! Please note: For live weather data, I'd connect to a weather API. Semantic caching helps when users ask about weather features or historical patterns.", cached: true },
-      { role: "user", content: "Tell me about today's weather" },
-      { role: "assistant", content: "I can help you check the weather! Please note: For live weather data, I'd connect to a weather API. Semantic caching helps when users ask about weather features or historical patterns.", cached: true },
+      { role: "user", userName: "User 1", content: "Hey, find me Italian restaurants nearby" },
+      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: false },
+      { role: "user", userName: "User 2", content: "Um, I'm looking for like, Italian food around here" },
+      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: true },
+      { role: "user", userName: "User 3", content: "Show me some Italian places to eat" },
+      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: true },
     ],
     isGoodFit: true,
-    cacheExplanation: "Voice queries have natural speech variations — 'gonna', 'um', different phrasings — but mean the same thing"
+    cacheExplanation: "Voice has natural variations — 'um', 'like', casual phrasing — but the intent is identical"
   },
   {
     id: "ai-assistant",
@@ -85,15 +86,15 @@ const goodUseCases: UseCase[] = [
     title: "FAQ Chatbots",
     shortDesc: "Knowledge base assistants",
     conversation: [
-      { role: "user", content: "What are your business hours?" },
+      { role: "user", userName: "User 1", content: "What are your business hours?" },
       { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: false },
-      { role: "user", content: "When are you guys open?" },
+      { role: "user", userName: "User 2", content: "When are you guys open?" },
       { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: true },
-      { role: "user", content: "What time do you close?" },
+      { role: "user", userName: "User 3", content: "What time do you close?" },
       { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: true },
     ],
     isGoodFit: true,
-    cacheExplanation: "FAQ questions are asked thousands of times daily — perfect for caching"
+    cacheExplanation: "FAQ questions are asked thousands of times daily by different users — perfect for caching"
   },
   {
     id: "rag",
@@ -101,15 +102,15 @@ const goodUseCases: UseCase[] = [
     title: "RAG Applications",
     shortDesc: "Document search & retrieval",
     conversation: [
-      { role: "user", content: "What's our refund policy?" },
+      { role: "user", userName: "User 1", content: "What's your refund policy?" },
       { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: false },
-      { role: "user", content: "Can I get my money back if I return something?" },
+      { role: "user", userName: "User 2", content: "Can I get my money back if I return something?" },
       { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: true },
-      { role: "user", content: "How do returns work here?" },
+      { role: "user", userName: "User 3", content: "How do returns work here?" },
       { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: true },
     ],
     isGoodFit: true,
-    cacheExplanation: "Document queries often retrieve the same content — cache the response, skip the retrieval"
+    cacheExplanation: "Document queries retrieve the same content — multiple users, one cached response"
   },
 ]
 
@@ -120,13 +121,13 @@ const badUseCases: UseCase[] = [
     title: "Code Generation",
     shortDesc: "Programming assistance",
     conversation: [
-      { role: "user", content: "Write a function to sort an array" },
+      { role: "user", userName: "User 1", content: "Write a function to sort an array" },
       { role: "assistant", content: "function sortArray(arr) {\n  return arr.sort((a, b) => a - b);\n}", cached: false },
-      { role: "user", content: "Write a function to sort an array of objects by name" },
-      { role: "assistant", content: "This is a DIFFERENT question! Needs objects sorted by 'name' property, not numbers. A cached response would be wrong.", cached: false },
+      { role: "user", userName: "User 2", content: "Write a function to sort an array of objects by name" },
+      { role: "assistant", content: "WRONG if cached! User 2 needs objects sorted by 'name' property — completely different from sorting numbers.", cached: false },
     ],
     isGoodFit: false,
-    cacheExplanation: "Tiny differences in code requirements lead to completely different correct answers"
+    cacheExplanation: "Sounds similar but requires totally different code — tiny wording changes, big logic differences"
   },
   {
     id: "multi-turn",
@@ -134,15 +135,15 @@ const badUseCases: UseCase[] = [
     title: "Multi-Turn Chats",
     shortDesc: "Complex conversations",
     conversation: [
-      { role: "user", content: "I want to plan a trip" },
+      { role: "user", userName: "User 1", content: "I want to plan a trip" },
       { role: "assistant", content: "Great! Where would you like to go?", cached: false },
-      { role: "user", content: "Somewhere warm" },
-      { role: "assistant", content: "How about Miami or Cancun? When are you thinking of traveling?", cached: false },
-      { role: "user", content: "I want to plan a trip" },
-      { role: "assistant", content: "Each 'plan a trip' conversation is unique based on follow-up context. Caching the first response would ignore the conversation history.", cached: false },
+      { role: "user", userName: "User 1", content: "Somewhere warm with beaches" },
+      { role: "assistant", content: "How about Miami, Cancun, or the Bahamas?", cached: false },
+      { role: "user", userName: "User 2", content: "I want to plan a trip" },
+      { role: "assistant", content: "Can't cache this! User 2 might want mountains, not beaches. Each conversation needs fresh context.", cached: false },
     ],
     isGoodFit: false,
-    cacheExplanation: "Every response depends on the full conversation history — context makes caching ineffective"
+    cacheExplanation: "Same opening question, but each user's follow-up changes everything — context-dependent"
   },
   {
     id: "realtime",
@@ -150,13 +151,13 @@ const badUseCases: UseCase[] = [
     title: "Real-Time Data",
     shortDesc: "Live information queries",
     conversation: [
-      { role: "user", content: "What's Apple's stock price right now?" },
-      { role: "assistant", content: "AAPL is trading at $187.50 (as of 10:30 AM)", cached: false },
-      { role: "user", content: "What's Apple stock at?" },
-      { role: "assistant", content: "DANGER: A cached response would show old/wrong price! Real-time data must always be fresh.", cached: false },
+      { role: "user", userName: "User 1 (9:00 AM)", content: "What's Apple's stock price?" },
+      { role: "assistant", content: "AAPL is trading at $187.50", cached: false },
+      { role: "user", userName: "User 2 (2:00 PM)", content: "What's Apple stock at?" },
+      { role: "assistant", content: "WRONG if cached! Price changed to $191.25 since morning. Real-time data can't be cached.", cached: false },
     ],
     isGoodFit: false,
-    cacheExplanation: "Stock prices, weather, and live data change constantly — stale cache = wrong answers"
+    cacheExplanation: "Stock prices, sports scores, news — data changes constantly, cached answers become lies"
   },
   {
     id: "creative",
@@ -164,13 +165,13 @@ const badUseCases: UseCase[] = [
     title: "Creative Writing",
     shortDesc: "Content generation",
     conversation: [
-      { role: "user", content: "Write me a tagline for my coffee shop" },
+      { role: "user", userName: "User 1", content: "Write me a tagline for my coffee shop" },
       { role: "assistant", content: "\"Wake up to something wonderful.\"", cached: false },
-      { role: "user", content: "Give me a slogan for my cafe" },
-      { role: "assistant", content: "Users expect UNIQUE creative outputs each time. Returning the same tagline defeats the purpose!", cached: false },
+      { role: "user", userName: "User 2", content: "Give me a slogan for my cafe" },
+      { role: "assistant", content: "BAD if cached! User 2 gets the same tagline as User 1 — defeats the whole point of creativity.", cached: false },
     ],
     isGoodFit: false,
-    cacheExplanation: "Creative requests expect fresh, unique outputs — not recycled content"
+    cacheExplanation: "Users expect unique creative output — recycling someone else's tagline is useless"
   },
   {
     id: "high-stakes",
@@ -178,13 +179,13 @@ const badUseCases: UseCase[] = [
     title: "Medical/Legal/Finance",
     shortDesc: "High-stakes advice",
     conversation: [
-      { role: "user", content: "I have chest pain and shortness of breath" },
-      { role: "assistant", content: "Please seek immediate medical attention. Call emergency services or go to the nearest ER.", cached: false },
-      { role: "user", content: "My chest feels tight and I can't breathe well" },
-      { role: "assistant", content: "Similar symptoms can have very different causes. Medical advice requires careful evaluation, not cached responses.", cached: false },
+      { role: "user", userName: "User 1", content: "I have chest pain and shortness of breath" },
+      { role: "assistant", content: "Please seek immediate medical attention. Call emergency services.", cached: false },
+      { role: "user", userName: "User 2", content: "My chest feels tight and I can't breathe well" },
+      { role: "assistant", content: "DANGEROUS if cached! Could be anxiety, asthma, or heart attack — each case needs individual assessment.", cached: false },
     ],
     isGoodFit: false,
-    cacheExplanation: "Medical, legal, and financial advice needs precise evaluation — caching risks dangerous errors"
+    cacheExplanation: "Similar symptoms, different causes — medical/legal/financial advice must be evaluated fresh"
   },
 ]
 
@@ -327,10 +328,13 @@ function ChatWindow({ useCase, variant }: { useCase: UseCase, variant: "good" | 
           <div
             key={index}
             className={cn(
-              "flex",
-              message.role === "user" ? "justify-end" : "justify-start"
+              "flex flex-col",
+              message.role === "user" ? "items-end" : "items-start"
             )}
           >
+            {message.role === "user" && message.userName && (
+              <span className="text-xs text-muted-foreground mb-1 px-1">{message.userName}</span>
+            )}
             <div className={cn(
               "max-w-[85%] rounded-2xl px-4 py-2",
               message.role === "user"
@@ -346,7 +350,7 @@ function ChatWindow({ useCase, variant }: { useCase: UseCase, variant: "good" | 
                   {message.cached ? (
                     <>
                       <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Served from cache — instant response
+                      Served from cache
                     </>
                   ) : (
                     <>
