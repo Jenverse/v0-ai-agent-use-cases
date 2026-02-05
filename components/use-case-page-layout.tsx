@@ -108,7 +108,7 @@ export function UseCasePageLayout({
             {/* Customer Examples */}
             <div className="pt-4 border-t border-border/50">
               <h4 className="text-sm font-semibold text-muted-foreground mb-3">
-                {isGoodFit ? "Target Customers" : "Examples to Avoid"}
+                {isGoodFit ? "Think of products like..." : "Think of products like..."}
               </h4>
               <div className="flex flex-wrap gap-2">
                 {customerExamples.map((example, index) => (
