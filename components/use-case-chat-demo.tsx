@@ -80,8 +80,8 @@ const notIdealUseCases: UseCase[] = [
   {
     id: "high-stakes",
     icon: Shield,
-    title: "Medical / Legal / Financial",
-    description: "High-stakes advice requires individual evaluation",
+    title: "Medical Triaging",
+    description: "Symptom assessment requires individual evaluation, not cached responses",
     href: "/use-cases/high-stakes"
   },
 ]

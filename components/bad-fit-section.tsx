@@ -28,9 +28,9 @@ const badUseCases = [
   },
   {
     icon: Shield,
-    title: "High-Stakes Decision Making",
-    description: "Medical, legal, or financial advice where nuanced accuracy is critical. Even semantically similar queries may need distinct, verified answers.",
-    reason: "Correctness guarantees needed"
+    title: "Medical Triaging",
+    description: "Symptom assessment where nuanced accuracy is critical. Even semantically similar symptoms may have vastly different causes and require distinct guidance.",
+    reason: "Individual evaluation required"
   }
 ]
 

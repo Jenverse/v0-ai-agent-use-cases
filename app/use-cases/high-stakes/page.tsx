@@ -4,7 +4,7 @@ import { UseCasePageLayout } from "@/components/use-case-page-layout"
 export default function HighStakesPage() {
   return (
     <UseCasePageLayout
-      title="Medical / Legal / Financial"
+      title="Medical Triaging"
       icon={<Shield className="w-7 h-7 text-red-500" />}
       isGoodFit={false}
       keyPoints={[
