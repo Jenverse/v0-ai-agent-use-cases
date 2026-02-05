@@ -1,10 +1,11 @@
 "use client"
 
 import React from "react"
-
 import { useState } from "react"
-import { ShoppingBag, Headphones, Mic, Bot, Search, Code, MessageCircle, RefreshCw, Sparkles, Shield, CheckCircle2, XCircle } from "lucide-react"
+import { ShoppingBag, Headphones, Mic, Bot, Search, Code, RefreshCw, Sparkles, Shield, CheckCircle2, XCircle, ChevronDown, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+type TabType = "ideal" | "not-ideal" | "discovery"
 
 interface ChatMessage {
   role: "user" | "assistant"
@@ -17,368 +18,397 @@ interface UseCase {
   id: string
   icon: React.ElementType
   title: string
-  shortDesc: string
-  product?: {
-    name: string
-    image: string
-  }
+  whyGoodFit: string
+  scenario: string
   conversation: ChatMessage[]
-  isGoodFit: boolean
-  cacheExplanation: string
+  bottomLine: string
 }
 
-const goodUseCases: UseCase[] = [
+interface BadUseCase {
+  id: string
+  icon: React.ElementType
+  title: string
+  whyBadFit: string
+  scenario: string
+  conversation: ChatMessage[]
+  bottomLine: string
+}
+
+const idealUseCases: UseCase[] = [
   {
     id: "product-qa",
     icon: ShoppingBag,
     title: "Product Q&A",
-    shortDesc: "E-commerce chatbots",
-    product: {
-      name: "ThermoFlask Pro",
-      image: "/thermos.jpg"
-    },
+    whyGoodFit: "Customers ask the same product questions in hundreds of different ways. \"How long does it stay warm?\" and \"Will my food still be hot at lunch?\" are semantically identical — one cached answer serves them all.",
+    scenario: "Amazon-style product chatbot for a thermos",
     conversation: [
-      { role: "user", userName: "User 1", content: "How long does the thermos keep food warm?" },
+      { role: "user", userName: "User 1", content: "How long will the thermos keep my food warm?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: false },
-      { role: "user", userName: "User 2", content: "Will my soup stay hot all day in this?" },
+      { role: "user", userName: "User 2", content: "Will my soup still be hot by lunchtime?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: true },
-      { role: "user", userName: "User 3", content: "Is it good for keeping meals warm?" },
+      { role: "user", userName: "User 3", content: "Is this good for keeping meals warm all day?" },
       { role: "assistant", content: "The ThermoFlask Pro keeps food hot for up to 12 hours and cold for up to 24 hours thanks to its double-wall vacuum insulation.", cached: true },
     ],
-    isGoodFit: true,
-    cacheExplanation: "3 different users asking the same thing in their own words — all served from one cached response"
+    bottomLine: "3 users, 3 different phrasings, 1 LLM call. Cache hits = instant responses + cost savings."
   },
   {
     id: "customer-support",
     icon: Headphones,
     title: "Customer Support",
-    shortDesc: "Help desk & support bots",
+    whyGoodFit: "Support tickets are repetitive by nature. Password resets, shipping questions, return policies — the same issues come in daily, just worded differently by each customer.",
+    scenario: "Help desk chatbot handling account issues",
     conversation: [
       { role: "user", userName: "User 1", content: "How do I reset my password?" },
-      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: false },
+      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link within 5 minutes.", cached: false },
       { role: "user", userName: "User 2", content: "I forgot my login credentials" },
-      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: true },
+      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link within 5 minutes.", cached: true },
       { role: "user", userName: "User 3", content: "Can't get into my account, what do I do?" },
-      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link.", cached: true },
+      { role: "assistant", content: "To reset your password: Go to Settings > Account > Security > Reset Password. You'll receive an email with a reset link within 5 minutes.", cached: true },
     ],
-    isGoodFit: true,
-    cacheExplanation: "Password reset is the #1 support question — each user phrases it differently, same answer works"
+    bottomLine: "Password reset is the #1 support question. Different words, same solution — perfect for caching."
   },
   {
     id: "voice-search",
     icon: Mic,
     title: "Voice Search",
-    shortDesc: "Voice assistants & search",
+    whyGoodFit: "Voice input is naturally messy — filler words, casual phrasing, incomplete sentences. Semantic caching understands intent despite these variations.",
+    scenario: "Voice assistant finding restaurants",
     conversation: [
-      { role: "user", userName: "User 1", content: "Hey, find me Italian restaurants nearby" },
-      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: false },
-      { role: "user", userName: "User 2", content: "Um, I'm looking for like, Italian food around here" },
-      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: true },
+      { role: "user", userName: "User 1", content: "Find me Italian restaurants nearby" },
+      { role: "assistant", content: "Here are top Italian restaurants near you:\n1. Bella Italia (0.3 mi) - 4.5 stars\n2. Tony's Trattoria (0.5 mi) - 4.3 stars\n3. Pasta House (0.8 mi) - 4.4 stars", cached: false },
+      { role: "user", userName: "User 2", content: "Um, I'm looking for like, Italian food around here?" },
+      { role: "assistant", content: "Here are top Italian restaurants near you:\n1. Bella Italia (0.3 mi) - 4.5 stars\n2. Tony's Trattoria (0.5 mi) - 4.3 stars\n3. Pasta House (0.8 mi) - 4.4 stars", cached: true },
       { role: "user", userName: "User 3", content: "Show me some Italian places to eat" },
-      { role: "assistant", content: "Here are the top Italian restaurants near you: 1. Bella Italia (0.3 mi), 2. Tony's Trattoria (0.5 mi), 3. Pasta House (0.8 mi)", cached: true },
+      { role: "assistant", content: "Here are top Italian restaurants near you:\n1. Bella Italia (0.3 mi) - 4.5 stars\n2. Tony's Trattoria (0.5 mi) - 4.3 stars\n3. Pasta House (0.8 mi) - 4.4 stars", cached: true },
     ],
-    isGoodFit: true,
-    cacheExplanation: "Voice has natural variations — 'um', 'like', casual phrasing — but the intent is identical"
+    bottomLine: "Voice queries have natural speech variations — 'um', 'like', casual phrasing — but intent is identical."
   },
   {
-    id: "ai-assistant",
+    id: "faq-chatbot",
     icon: Bot,
     title: "FAQ Chatbots",
-    shortDesc: "Knowledge base assistants",
+    whyGoodFit: "FAQs exist because the same questions come up constantly. \"When are you open?\" gets asked thousands of times daily in every possible variation.",
+    scenario: "Business website chatbot answering common questions",
     conversation: [
       { role: "user", userName: "User 1", content: "What are your business hours?" },
-      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: false },
+      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays. Our support team typically responds within 2 hours during business hours.", cached: false },
       { role: "user", userName: "User 2", content: "When are you guys open?" },
-      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: true },
+      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays. Our support team typically responds within 2 hours during business hours.", cached: true },
       { role: "user", userName: "User 3", content: "What time do you close?" },
-      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays.", cached: true },
+      { role: "assistant", content: "We're open Monday through Friday, 9 AM to 6 PM EST. Closed on weekends and major holidays. Our support team typically responds within 2 hours during business hours.", cached: true },
     ],
-    isGoodFit: true,
-    cacheExplanation: "FAQ questions are asked thousands of times daily by different users — perfect for caching"
+    bottomLine: "FAQ = Frequently Asked Questions. The 'frequently' part is why caching works so well."
   },
   {
     id: "rag",
     icon: Search,
     title: "RAG Applications",
-    shortDesc: "Document search & retrieval",
+    whyGoodFit: "When users query a knowledge base, many questions retrieve the same documents. Cache the response and skip both the retrieval AND the LLM call.",
+    scenario: "Internal knowledge base for company policies",
     conversation: [
-      { role: "user", userName: "User 1", content: "What's your refund policy?" },
-      { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: false },
+      { role: "user", userName: "User 1", content: "What's the refund policy?" },
+      { role: "assistant", content: "Per our policy document: Full refunds available within 30 days of purchase. Items must be unused and in original packaging. Refunds are processed within 5-7 business days.", cached: false },
       { role: "user", userName: "User 2", content: "Can I get my money back if I return something?" },
-      { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: true },
+      { role: "assistant", content: "Per our policy document: Full refunds available within 30 days of purchase. Items must be unused and in original packaging. Refunds are processed within 5-7 business days.", cached: true },
       { role: "user", userName: "User 3", content: "How do returns work here?" },
-      { role: "assistant", content: "According to our policy document: Full refunds are available within 30 days of purchase. Items must be unused and in original packaging.", cached: true },
+      { role: "assistant", content: "Per our policy document: Full refunds available within 30 days of purchase. Items must be unused and in original packaging. Refunds are processed within 5-7 business days.", cached: true },
     ],
-    isGoodFit: true,
-    cacheExplanation: "Document queries retrieve the same content — multiple users, one cached response"
+    bottomLine: "Same documents, same answers — cache once, serve many."
   },
 ]
 
-const badUseCases: UseCase[] = [
+const notIdealUseCases: BadUseCase[] = [
   {
     id: "code-gen",
     icon: Code,
     title: "Code Generation",
-    shortDesc: "Programming assistance",
+    whyBadFit: "Small wording differences in code requests lead to completely different correct answers. Caching would return wrong code.",
+    scenario: "Developer asking for sorting functions",
     conversation: [
       { role: "user", userName: "User 1", content: "Write a function to sort an array" },
       { role: "assistant", content: "function sortArray(arr) {\n  return arr.sort((a, b) => a - b);\n}", cached: false },
       { role: "user", userName: "User 2", content: "Write a function to sort an array of objects by name" },
-      { role: "assistant", content: "WRONG if cached! User 2 needs objects sorted by 'name' property — completely different from sorting numbers.", cached: false },
+      { role: "assistant", content: "WRONG if cached! User 2 needs to sort objects by a 'name' property — completely different logic than sorting numbers.", cached: false },
     ],
-    isGoodFit: false,
-    cacheExplanation: "Sounds similar but requires totally different code — tiny wording changes, big logic differences"
-  },
-  {
-    id: "multi-turn",
-    icon: MessageCircle,
-    title: "Multi-Turn Chats",
-    shortDesc: "Complex conversations",
-    conversation: [
-      { role: "user", userName: "User 1", content: "I want to plan a trip" },
-      { role: "assistant", content: "Great! Where would you like to go?", cached: false },
-      { role: "user", userName: "User 1", content: "Somewhere warm with beaches" },
-      { role: "assistant", content: "How about Miami, Cancun, or the Bahamas?", cached: false },
-      { role: "user", userName: "User 2", content: "I want to plan a trip" },
-      { role: "assistant", content: "Can't cache this! User 2 might want mountains, not beaches. Each conversation needs fresh context.", cached: false },
-    ],
-    isGoodFit: false,
-    cacheExplanation: "Same opening question, but each user's follow-up changes everything — context-dependent"
+    bottomLine: "Sounds similar, but requires totally different code. Tiny wording changes = big logic differences."
   },
   {
     id: "realtime",
     icon: RefreshCw,
     title: "Real-Time Data",
-    shortDesc: "Live information queries",
+    whyBadFit: "Stock prices, weather, sports scores — this data changes constantly. A cached answer from an hour ago is a wrong answer now.",
+    scenario: "Financial assistant checking stock prices",
     conversation: [
       { role: "user", userName: "User 1 (9:00 AM)", content: "What's Apple's stock price?" },
-      { role: "assistant", content: "AAPL is trading at $187.50", cached: false },
+      { role: "assistant", content: "AAPL is currently trading at $187.50", cached: false },
       { role: "user", userName: "User 2 (2:00 PM)", content: "What's Apple stock at?" },
-      { role: "assistant", content: "WRONG if cached! Price changed to $191.25 since morning. Real-time data can't be cached.", cached: false },
+      { role: "assistant", content: "WRONG if cached! Price is now $191.25 — the cached response would give outdated, incorrect information.", cached: false },
     ],
-    isGoodFit: false,
-    cacheExplanation: "Stock prices, sports scores, news — data changes constantly, cached answers become lies"
+    bottomLine: "Real-time data can't be cached. Stale answers = wrong answers."
   },
   {
     id: "creative",
     icon: Sparkles,
     title: "Creative Writing",
-    shortDesc: "Content generation",
+    whyBadFit: "Users asking for creative content expect unique outputs. Returning the same tagline to everyone defeats the purpose.",
+    scenario: "Marketing assistant generating taglines",
     conversation: [
       { role: "user", userName: "User 1", content: "Write me a tagline for my coffee shop" },
       { role: "assistant", content: "\"Wake up to something wonderful.\"", cached: false },
       { role: "user", userName: "User 2", content: "Give me a slogan for my cafe" },
-      { role: "assistant", content: "BAD if cached! User 2 gets the same tagline as User 1 — defeats the whole point of creativity.", cached: false },
+      { role: "assistant", content: "USELESS if cached! User 2 gets the exact same tagline as User 1 — defeats the entire purpose of creative generation.", cached: false },
     ],
-    isGoodFit: false,
-    cacheExplanation: "Users expect unique creative output — recycling someone else's tagline is useless"
+    bottomLine: "Creativity requires uniqueness. Recycled content is worthless."
   },
   {
     id: "high-stakes",
     icon: Shield,
-    title: "Medical/Legal/Finance",
-    shortDesc: "High-stakes advice",
+    title: "Medical / Legal / Financial",
+    whyBadFit: "High-stakes advice requires careful, individual evaluation. Similar-sounding symptoms or situations can have very different correct responses.",
+    scenario: "Health chatbot receiving symptom reports",
     conversation: [
       { role: "user", userName: "User 1", content: "I have chest pain and shortness of breath" },
-      { role: "assistant", content: "Please seek immediate medical attention. Call emergency services.", cached: false },
+      { role: "assistant", content: "These symptoms require immediate medical attention. Please call emergency services or visit the nearest ER.", cached: false },
       { role: "user", userName: "User 2", content: "My chest feels tight and I can't breathe well" },
-      { role: "assistant", content: "DANGEROUS if cached! Could be anxiety, asthma, or heart attack — each case needs individual assessment.", cached: false },
+      { role: "assistant", content: "DANGEROUS if cached! Could be anxiety, asthma, or cardiac event — each requires different responses. Must evaluate individually.", cached: false },
     ],
-    isGoodFit: false,
-    cacheExplanation: "Similar symptoms, different causes — medical/legal/financial advice must be evaluated fresh"
+    bottomLine: "When lives or livelihoods are at stake, every query deserves fresh evaluation."
   },
 ]
 
 export function UseCaseChatDemo() {
-  const [selectedGoodCase, setSelectedGoodCase] = useState<UseCase>(goodUseCases[0])
-  const [selectedBadCase, setSelectedBadCase] = useState<UseCase>(badUseCases[0])
+  const [activeTab, setActiveTab] = useState<TabType>("ideal")
+  const [expandedCase, setExpandedCase] = useState<string | null>("product-qa")
+
+  const toggleCase = (id: string) => {
+    setExpandedCase(expandedCase === id ? null : id)
+  }
 
   return (
-    <div className="py-16 px-6">
-      <div className="max-w-7xl mx-auto space-y-24">
-        {/* Good Fit Section */}
-        <section>
-          <div className="flex items-center gap-3 mb-2">
-            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Great For Semantic Caching</h2>
-          </div>
-          <p className="text-muted-foreground mb-8 max-w-2xl">
-            Click a use case to see how the same answer serves multiple question variations
-          </p>
-
-          <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-            {/* Use Case Selector */}
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-              {goodUseCases.map((useCase) => (
-                <button
-                  key={useCase.id}
-                  onClick={() => setSelectedGoodCase(useCase)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all whitespace-nowrap lg:whitespace-normal",
-                    "border border-border hover:border-emerald-500/50",
-                    selectedGoodCase.id === useCase.id
-                      ? "bg-emerald-500/10 border-emerald-500 text-foreground"
-                      : "bg-card text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <useCase.icon className={cn(
-                    "w-5 h-5 shrink-0",
-                    selectedGoodCase.id === useCase.id ? "text-emerald-500" : "text-muted-foreground"
-                  )} />
-                  <div>
-                    <div className="font-medium text-sm">{useCase.title}</div>
-                    <div className="text-xs text-muted-foreground hidden lg:block">{useCase.shortDesc}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Chat Demo */}
-            <ChatWindow useCase={selectedGoodCase} variant="good" />
-          </div>
-        </section>
-
-        {/* Bad Fit Section */}
-        <section>
-          <div className="flex items-center gap-3 mb-2">
-            <XCircle className="w-6 h-6 text-red-500" />
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Not Ideal For</h2>
-          </div>
-          <p className="text-muted-foreground mb-8 max-w-2xl">
-            Click to see why these scenarios don't benefit from semantic caching
-          </p>
-
-          <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-            {/* Use Case Selector */}
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-              {badUseCases.map((useCase) => (
-                <button
-                  key={useCase.id}
-                  onClick={() => setSelectedBadCase(useCase)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all whitespace-nowrap lg:whitespace-normal",
-                    "border border-border hover:border-red-500/50",
-                    selectedBadCase.id === useCase.id
-                      ? "bg-red-500/10 border-red-500 text-foreground"
-                      : "bg-card text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <useCase.icon className={cn(
-                    "w-5 h-5 shrink-0",
-                    selectedBadCase.id === useCase.id ? "text-red-500" : "text-muted-foreground"
-                  )} />
-                  <div>
-                    <div className="font-medium text-sm">{useCase.title}</div>
-                    <div className="text-xs text-muted-foreground hidden lg:block">{useCase.shortDesc}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Chat Demo */}
-            <ChatWindow useCase={selectedBadCase} variant="bad" />
-          </div>
-        </section>
-      </div>
-    </div>
-  )
-}
-
-function ChatWindow({ useCase, variant }: { useCase: UseCase, variant: "good" | "bad" }) {
-  const accentColor = variant === "good" ? "emerald" : "red"
-  
-  return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      {/* Chat Header */}
-      <div className={cn(
-        "px-4 py-3 border-b border-border flex items-center gap-3",
-        variant === "good" ? "bg-emerald-500/5" : "bg-red-500/5"
-      )}>
-        <div className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center",
-          variant === "good" ? "bg-emerald-500/20" : "bg-red-500/20"
-        )}>
-          <useCase.icon className={cn(
-            "w-4 h-4",
-            variant === "good" ? "text-emerald-500" : "text-red-500"
-          )} />
-        </div>
-        <div>
-          <div className="font-medium text-foreground text-sm">{useCase.title}</div>
-          <div className="text-xs text-muted-foreground">{useCase.shortDesc}</div>
-        </div>
-      </div>
-
-      {/* Product Display (if applicable) */}
-      {useCase.product && (
-        <div className="px-4 py-3 border-b border-border bg-secondary/30 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-2xl">
-            🧴
-          </div>
-          <div>
-            <div className="font-medium text-foreground text-sm">{useCase.product.name}</div>
-            <div className="text-xs text-muted-foreground">Double-wall vacuum insulated container</div>
-          </div>
-        </div>
-      )}
-
-      {/* Chat Messages */}
-      <div className="p-4 space-y-4 min-h-[300px] max-h-[400px] overflow-y-auto">
-        {useCase.conversation.map((message, index) => (
-          <div
-            key={index}
+    <div className="py-8 px-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Navigation Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <button
+            onClick={() => setActiveTab("ideal")}
             className={cn(
-              "flex flex-col",
-              message.role === "user" ? "items-end" : "items-start"
+              "flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all",
+              activeTab === "ideal"
+                ? "bg-emerald-500 text-white"
+                : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
             )}
           >
-            {message.role === "user" && message.userName && (
-              <span className="text-xs text-muted-foreground mb-1 px-1">{message.userName}</span>
+            <CheckCircle2 className="w-4 h-4" />
+            Ideal Use Cases
+          </button>
+          <button
+            onClick={() => setActiveTab("not-ideal")}
+            className={cn(
+              "flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all",
+              activeTab === "not-ideal"
+                ? "bg-red-500 text-white"
+                : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
             )}
-            <div className={cn(
-              "max-w-[85%] rounded-2xl px-4 py-2",
-              message.role === "user"
-                ? "bg-secondary text-foreground rounded-br-md"
-                : "bg-muted/50 text-foreground rounded-bl-md"
-            )}>
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-              {message.role === "assistant" && message.cached !== undefined && (
-                <div className={cn(
-                  "mt-2 text-xs font-medium flex items-center gap-1",
-                  message.cached ? "text-emerald-500" : "text-muted-foreground"
-                )}>
-                  {message.cached ? (
-                    <>
-                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Served from cache
-                    </>
-                  ) : (
-                    <>
-                      <span className="inline-block w-2 h-2 rounded-full bg-muted-foreground" />
-                      New LLM call
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Explanation Footer */}
-      <div className={cn(
-        "px-4 py-3 border-t border-border",
-        variant === "good" ? "bg-emerald-500/5" : "bg-red-500/5"
-      )}>
-        <div className={cn(
-          "text-sm font-medium",
-          variant === "good" ? "text-emerald-500" : "text-red-500"
-        )}>
-          {variant === "good" ? "Why it works:" : "Why it doesn't work:"}
+          >
+            <XCircle className="w-4 h-4" />
+            Not Ideal For
+          </button>
+          <a
+            href="https://docs.google.com/document/d/1GPV5xwexYmCh9aHzof4pi2wJ9wjENRqsD6Q5wBItuVQ/edit?tab=t.0#heading=h.mhwoycf3d4gl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-3 rounded-full font-medium bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Discovery Guide
+          </a>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          {useCase.cacheExplanation}
-        </p>
+
+        {/* Ideal Use Cases */}
+        {activeTab === "ideal" && (
+          <div className="space-y-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Perfect for Semantic Caching</h2>
+              <p className="text-muted-foreground">Click each use case to see a real-world example</p>
+            </div>
+            
+            {idealUseCases.map((useCase) => (
+              <div key={useCase.id} className="border border-border rounded-xl overflow-hidden bg-card">
+                {/* Header - Always visible */}
+                <button
+                  onClick={() => toggleCase(useCase.id)}
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-secondary/30 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <useCase.icon className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{useCase.title}</h3>
+                      <p className="text-sm text-muted-foreground">{useCase.whyGoodFit.slice(0, 80)}...</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={cn(
+                    "w-5 h-5 text-muted-foreground transition-transform",
+                    expandedCase === useCase.id && "rotate-180"
+                  )} />
+                </button>
+
+                {/* Expanded Content */}
+                {expandedCase === useCase.id && (
+                  <div className="border-t border-border">
+                    {/* Why it's a good fit */}
+                    <div className="px-6 py-4 bg-emerald-500/5">
+                      <h4 className="font-medium text-emerald-500 mb-2">Why it's a good fit</h4>
+                      <p className="text-foreground">{useCase.whyGoodFit}</p>
+                    </div>
+
+                    {/* Scenario */}
+                    <div className="px-6 py-3 bg-secondary/30 border-y border-border">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Example Scenario</span>
+                      <p className="text-sm text-foreground mt-1">{useCase.scenario}</p>
+                    </div>
+
+                    {/* Chat Messages */}
+                    <div className="p-4 space-y-3">
+                      {useCase.conversation.map((message, index) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            "flex flex-col",
+                            message.role === "user" ? "items-end" : "items-start"
+                          )}
+                        >
+                          {message.role === "user" && message.userName && (
+                            <span className="text-xs text-emerald-500 font-medium mb-1 px-1">{message.userName}</span>
+                          )}
+                          <div className={cn(
+                            "max-w-[85%] rounded-2xl px-4 py-2",
+                            message.role === "user"
+                              ? "bg-secondary text-foreground rounded-br-sm"
+                              : "bg-muted/50 text-foreground rounded-bl-sm"
+                          )}>
+                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            {message.role === "assistant" && message.cached !== undefined && (
+                              <div className={cn(
+                                "mt-2 text-xs font-medium flex items-center gap-1",
+                                message.cached ? "text-emerald-500" : "text-muted-foreground"
+                              )}>
+                                {message.cached ? (
+                                  <>
+                                    <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    CACHE HIT — Instant response
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="inline-block w-2 h-2 rounded-full bg-muted-foreground" />
+                                    New LLM call (cached for next time)
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Line */}
+                    <div className="px-6 py-4 bg-emerald-500/10 border-t border-border">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                        <p className="text-sm font-medium text-foreground">{useCase.bottomLine}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Not Ideal Use Cases */}
+        {activeTab === "not-ideal" && (
+          <div className="space-y-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Not Ideal For These Scenarios</h2>
+              <p className="text-muted-foreground">Understanding when semantic caching won't help</p>
+            </div>
+            
+            {notIdealUseCases.map((useCase) => (
+              <div key={useCase.id} className="border border-border rounded-xl overflow-hidden bg-card">
+                {/* Header - Always visible */}
+                <button
+                  onClick={() => toggleCase(useCase.id)}
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-secondary/30 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <useCase.icon className="w-5 h-5 text-red-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{useCase.title}</h3>
+                      <p className="text-sm text-muted-foreground">{useCase.whyBadFit.slice(0, 80)}...</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={cn(
+                    "w-5 h-5 text-muted-foreground transition-transform",
+                    expandedCase === useCase.id && "rotate-180"
+                  )} />
+                </button>
+
+                {/* Expanded Content */}
+                {expandedCase === useCase.id && (
+                  <div className="border-t border-border">
+                    {/* Why it's not ideal */}
+                    <div className="px-6 py-4 bg-red-500/5">
+                      <h4 className="font-medium text-red-500 mb-2">Why it's not ideal</h4>
+                      <p className="text-foreground">{useCase.whyBadFit}</p>
+                    </div>
+
+                    {/* Scenario */}
+                    <div className="px-6 py-3 bg-secondary/30 border-y border-border">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Example Scenario</span>
+                      <p className="text-sm text-foreground mt-1">{useCase.scenario}</p>
+                    </div>
+
+                    {/* Chat Messages */}
+                    <div className="p-4 space-y-3">
+                      {useCase.conversation.map((message, index) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            "flex flex-col",
+                            message.role === "user" ? "items-end" : "items-start"
+                          )}
+                        >
+                          {message.role === "user" && message.userName && (
+                            <span className="text-xs text-red-400 font-medium mb-1 px-1">{message.userName}</span>
+                          )}
+                          <div className={cn(
+                            "max-w-[85%] rounded-2xl px-4 py-2",
+                            message.role === "user"
+                              ? "bg-secondary text-foreground rounded-br-sm"
+                              : "bg-muted/50 text-foreground rounded-bl-sm"
+                          )}>
+                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Line */}
+                    <div className="px-6 py-4 bg-red-500/10 border-t border-border">
+                      <div className="flex items-start gap-2">
+                        <XCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                        <p className="text-sm font-medium text-foreground">{useCase.bottomLine}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
