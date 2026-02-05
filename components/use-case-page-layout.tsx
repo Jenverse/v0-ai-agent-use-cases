@@ -132,9 +132,17 @@ export function UseCasePageLayout({
         {/* Right Column - Chat Demo */}
         <div className="border border-border rounded-2xl overflow-hidden bg-card">
           {/* Chat Header */}
-          <div className="px-5 py-4 border-b border-border bg-secondary/30">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Example Scenario</span>
-            <p className="text-foreground font-medium mt-1">{scenario}</p>
+          <div className={cn(
+            "px-5 py-5 border-b border-border",
+            isGoodFit
+              ? "bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent"
+              : "bg-gradient-to-r from-red-500/15 via-red-500/5 to-transparent"
+          )}>
+            <span className={cn(
+              "text-xs font-semibold uppercase tracking-wider",
+              isGoodFit ? "text-emerald-500" : "text-red-500"
+            )}>Example Scenario</span>
+            <p className="text-foreground font-medium mt-1.5 leading-relaxed">{scenario}</p>
           </div>
 
           {/* Chat Messages */}
